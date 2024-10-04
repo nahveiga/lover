@@ -35,7 +35,8 @@
             margin-bottom: 20px;
         }
 
-        #next-btn {
+        #next-btn,
+        #start-btn {
             padding: 10px 20px;
             background-color: #879968;
             border: none;
@@ -45,7 +46,8 @@
             cursor: pointer;
         }
 
-        #next-btn:hover {
+        #next-btn:hover,
+        #start-btn:hover {
             background-color: #6b8f23;
         }
 
@@ -92,7 +94,11 @@
 <body>
     <div class="game-container">
         <h1>:) (:</h1>
-        <div id="curiosity-container">
+        <div id="start-container">
+            <h2>Welcome! Clique em "Instalar" e tenha acesso ao aplicativo em seu celular :)</h2>
+            <button id="start-btn" onclick="startGame()">Começar</button>
+        </div>
+        <div id="curiosity-container" class="hidden">
             <p id="curiosity"></p>
             <button id="next-btn" onclick="showNextCuriosity()">Clique para ver a próxima curiosidade</button>
         </div>
@@ -107,19 +113,19 @@
         </div>
     </div>
 
-    <script> 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                .then(registration => {
-                    console.log('Service Worker registrado com sucesso:', registration);
-                })
-                .catch(error => {
-                    console.log('Falha ao registrar o Service Worker:', error);
-                });
-        });
-    }
- 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado com sucesso:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Falha ao registrar o Service Worker:', error);
+                    });
+            });
+        }
+
         const curiosities = [
             "Amo o verde e amo o verde em teus olhos. Me mostram a paixão que há em você, e redefiniu a cor do amor para mim... O amor é verde.",
             "Amo seu sorriso e amo ser o motivo dele, te fazer sorrir é a minha coisa favorita... em seguida é te irritar :)",
@@ -129,6 +135,12 @@
         ];
 
         let currentCuriosity = 0;
+
+        function startGame() {
+            document.getElementById("start-container").classList.add("hidden");
+            document.getElementById("curiosity-container").classList.remove("hidden");
+            showNextCuriosity();
+        }
 
         function showNextCuriosity() {
             const curiosityElement = document.getElementById("curiosity");
@@ -185,9 +197,6 @@
             noButton.style.left = `${x}px`;
             noButton.style.top = `${y}px`;
         }
-
-        // Inicializa o jogo
-        window.onload = showNextCuriosity;
     </script>
 </body>
 
