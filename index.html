@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <title>:)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e1e7da;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .game-container {
+            width: 80%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #d9dcc3;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #6b8f23;
+        }
+
+        #curiosity {
+            font-size: 20px;
+            color: #4f6f1e;
+            margin-bottom: 20px;
+        }
+
+        #next-btn {
+            padding: 10px 20px;
+            background-color: #879968;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #next-btn:hover {
+            background-color: #6b8f23;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .option-btn {
+            padding: 10px 20px;
+            background-color: #879968;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            position: relative;
+        }
+
+        .option-btn:hover {
+            background-color: #6b8f23;
+        }
+
+        #result-container {
+            margin-top: 20px;
+        }
+
+        #restart-btn {
+            padding: 10px 20px;
+            background-color: #879968;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #restart-btn:hover {
+            background-color: #6b8f23;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>:) (:</h1>
+        <div id="curiosity-container">
+            <p id="curiosity"></p>
+            <button id="next-btn" onclick="showNextCuriosity()">Clique para ver a próxima curiosidade</button>
+        </div>
+        <div id="final-container" class="hidden">
+            <h2 id="final-question">Acho que te amo... você me ama também?</h2>
+            <button id="yes-btn" class="option-btn" onclick="giveAnswer(true)">Sim</button>
+            <button id="no-btn" class="option-btn" onclick="moveNoButton()">Não</button>
+        </div>
+        <div id="result-container" class="hidden">
+            <h2 id="result-message"></h2>
+            <button id="restart-btn" onclick="restartGame()">Começar de novo</button>
+        </div>
+    </div>
+
+    <script> 
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('Service Worker registrado com sucesso:', registration);
+                })
+                .catch(error => {
+                    console.log('Falha ao registrar o Service Worker:', error);
+                });
+        });
+    }
+ 
+        const curiosities = [
+            "Amo o verde e amo o verde em teus olhos. Me mostram a paixão que há em você, e redefiniu a cor do amor para mim... O amor é verde.",
+            "Amo seu sorriso e amo ser o motivo dele, te fazer sorrir é a minha coisa favorita... em seguida é te irritar :)",
+            "Amo o seu toque, amo seu carinho, seu cafuné, abraçar você... tudo o que me faz sentir você eu amo.",
+            "Amo seu cuidado e amor, me sinto tão bem cuidada e zelada por você... não preciso mais de nada.",
+            "Eu amo você! Amo cada parte de ti e cada detalhe, por mínimo que seja, que torne você tão... você."
+        ];
+
+        let currentCuriosity = 0;
+
+        function showNextCuriosity() {
+            const curiosityElement = document.getElementById("curiosity");
+            const nextBtn = document.getElementById("next-btn");
+
+            if (currentCuriosity < curiosities.length) {
+                curiosityElement.innerText = "";
+                nextBtn.disabled = true; // Desativa o botão durante o atraso
+
+                setTimeout(() => {
+                    curiosityElement.innerText = curiosities[currentCuriosity];
+                    currentCuriosity++;
+                    nextBtn.disabled = false; // Reativa o botão após o atraso
+                }, 1000); // Atraso de 1 segundo para aparecer a próxima curiosidade
+            } else {
+                showFinalQuestion();
+            }
+        }
+
+        function showFinalQuestion() {
+            document.getElementById("curiosity-container").classList.add("hidden");
+            document.getElementById("final-container").classList.remove("hidden");
+        }
+
+        function giveAnswer(isYes) {
+            const resultContainer = document.getElementById("result-container");
+            const finalContainer = document.getElementById("final-container");
+            const resultMessage = document.getElementById("result-message");
+
+            finalContainer.classList.add("hidden");
+            resultContainer.classList.remove("hidden");
+
+            if (isYes) {
+                resultMessage.innerText = "Sim, estamos (não) namorando! 😍💑";
+            } else {
+                resultMessage.innerText = "Resposta errada... Tente de novo! 🙃";
+            }
+        }
+
+        function restartGame() {
+            currentCuriosity = 0;
+            document.getElementById("curiosity-container").classList.remove("hidden");
+            document.getElementById("result-container").classList.add("hidden");
+            document.getElementById("final-container").classList.add("hidden");
+            document.getElementById("curiosity").innerText = "";
+        }
+
+        function moveNoButton() {
+            const noButton = document.getElementById("no-btn");
+            const x = Math.random() * (window.innerWidth - noButton.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noButton.offsetHeight);
+
+            noButton.style.position = "absolute";
+            noButton.style.left = `${x}px`;
+            noButton.style.top = `${y}px`;
+        }
+
+        // Inicializa o jogo
+        window.onload = showNextCuriosity;
+    </script>
+</body>
+
+</html>
